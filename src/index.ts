@@ -1,4 +1,4 @@
-import { Day, Util } from './util';
+import { Util } from './util';
 import * as readline from 'readline';
 
 const rl = readline.createInterface({
