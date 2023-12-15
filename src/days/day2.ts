@@ -19,29 +19,17 @@ export default class Day2 implements Day {
   } as const;
 
   public async part1(): Promise<void> {
-    let possibleScore = 0;
+    let totalScore = 0;
 
     for (const line of await Util.readInputLines()) {
       const game = this.parseGame(line);
-      let isPossible = true;
 
-      for (const set of game.sets) {
-        if (
-          set.red > this.MAX_VALUES.red ||
-          set.green > this.MAX_VALUES.green ||
-          set.blue > this.MAX_VALUES.blue
-        ) {
-          isPossible = false;
-          break;
-        }
-      }
-
-      if (isPossible) {
-        possibleScore += game.id;
+      if (this.isGameWithinMaxValues(game)) {
+        totalScore += game.id;
       }
     }
 
-    console.log(possibleScore);
+    console.log(totalScore);
   }
   public async part2(): Promise<void> {
     let totalPower = 0;
@@ -94,6 +82,15 @@ export default class Day2 implements Day {
       id: gameID,
       sets: sets,
     };
+  }
+
+  private isGameWithinMaxValues(game: Game): boolean {
+    return game.sets.every(
+      (set) =>
+        set.red <= this.MAX_VALUES.red &&
+        set.green <= this.MAX_VALUES.green &&
+        set.blue <= this.MAX_VALUES.blue,
+    );
   }
 
   private findMaxSet(sets: Set[]): Set {
