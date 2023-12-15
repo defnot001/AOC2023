@@ -1,5 +1,16 @@
 import { Day, Util } from '../util';
 
+type Game = {
+  id: number;
+  sets: Set[];
+};
+
+type Set = {
+  red: number;
+  green: number;
+  blue: number;
+};
+
 export default class Day2 implements Day {
   private readonly MAX_VALUES = {
     red: 12,
@@ -32,11 +43,21 @@ export default class Day2 implements Day {
 
     console.log(possibleScore);
   }
-  public part2(): void {
-    throw new Error('Method not implemented.');
+  public async part2(): Promise<void> {
+    let totalPower = 0;
+
+    for (const line of await Util.readInputLines()) {
+      const game = this.parseGame(line);
+      const maxSet = this.findMaxSet(game.sets);
+      const setPower = this.calculateSetPower(maxSet);
+
+      totalPower += setPower;
+    }
+
+    console.log(totalPower);
   }
 
-  private parseGame(str: string) {
+  private parseGame(str: string): Game {
     const idRegex: RegExp = /Game\s+(\d+):/;
     const colorRegex: RegExp = /(\d+)\s+(blue|red|green)/g;
 
@@ -74,15 +95,19 @@ export default class Day2 implements Day {
       sets: sets,
     };
   }
+
+  private findMaxSet(sets: Set[]): Set {
+    return sets.reduce(
+      (maxSet, currentSet) => ({
+        red: Math.max(maxSet.red, currentSet.red),
+        green: Math.max(maxSet.green, currentSet.green),
+        blue: Math.max(maxSet.blue, currentSet.blue),
+      }),
+      { red: 0, green: 0, blue: 0 },
+    );
+  }
+
+  private calculateSetPower(set: Set): number {
+    return set.red * set.green * set.blue;
+  }
 }
-
-type Game = {
-  id: number;
-  sets: Set[];
-};
-
-type Set = {
-  red: number;
-  green: number;
-  blue: number;
-};
